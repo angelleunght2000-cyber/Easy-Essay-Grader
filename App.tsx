@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from './components/Button';
 import { ScoreCard } from './components/ScoreCard';
 import { EssayResult } from './types';
-import { scoreEssay } from './services/geminiService';
+import { scoreEssay } from './services/qwenService'; // Switched to Qwen Service
 import { exportToCSV } from './utils/export';
 import { trackEvent } from './services/analytics';
 
@@ -20,7 +20,6 @@ const App: React.FC = () => {
       const selectedFiles = Array.from(e.target.files);
       setFiles(prev => [...prev, ...selectedFiles]);
       trackEvent('files_selected', 'Engagement', 'Count', selectedFiles.length);
-      // Reset input value so the same file can be selected again if removed
       e.target.value = '';
     }
   };
@@ -40,7 +39,6 @@ const App: React.FC = () => {
     setStep(3);
     trackEvent('batch_processing_started', 'Analysis', 'FileCount', files.length);
     
-    // We store the length here because we will clear the files array after processing
     const totalFiles = files.length;
     
     for (let i = 0; i < totalFiles; i++) {
@@ -134,7 +132,7 @@ const App: React.FC = () => {
                   <h2 className="text-4xl font-extrabold text-slate-800 leading-tight">Objective analysis for high-stakes hiring.</h2>
                   <p className="text-slate-600 leading-relaxed text-lg">
                     This tool evaluates candidate essays against our 9 core values with absolute mathematical consistency. 
-                    Upload up to 100 documents in English or Chinese.
+                    Powered by Qwen-Max for industry-leading logic analysis.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-4">
@@ -142,7 +140,7 @@ const App: React.FC = () => {
                       { icon: "🧠", label: "60% Logic & Flow", desc: "Critical reasoning metric" },
                       { icon: "🎯", label: "20% Context (Values)", desc: "9 core company pillars" },
                       { icon: "✍️", label: "20% Grammar", desc: "Professional tone" },
-                      { icon: "🤖", label: "AI Sentry", desc: "Flags generated content" }
+                      { icon: "🛡️", label: "Qwen AI Core", desc: "Deterministic Engine" }
                     ].map((metric, i) => (
                       <div key={i} className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 hover:bg-blue-50 transition-colors">
                         <span className="text-2xl block mb-2">{metric.icon}</span>
@@ -224,7 +222,6 @@ const App: React.FC = () => {
               {step === 3 && (
                 <div className="animate-fadeIn text-center space-y-8 py-12">
                   <div className="relative inline-block">
-                    {/* The spin animation is now conditional on isProcessing */}
                     <div className={`w-40 h-40 border-[6px] border-blue-50 border-t-blue-600 rounded-full transition-all duration-700 ${isProcessing ? 'animate-spin' : ''}`}></div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
@@ -232,7 +229,7 @@ const App: React.FC = () => {
                           {isProcessing ? Math.round(((currentProcessingIndex + 1) / (currentProcessingIndex + 1 + (isProcessing ? 1 : 0))) * 100) : 100}%
                         </span>
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                          {isProcessing ? 'Analyzing' : 'Complete'}
+                          {isProcessing ? 'Qwen Analysis' : 'Complete'}
                         </span>
                       </div>
                     </div>
@@ -240,12 +237,12 @@ const App: React.FC = () => {
                   
                   <div className="space-y-2">
                     <h2 className="text-3xl font-bold text-slate-800">
-                      {isProcessing ? 'Objective Assessment...' : 'Session Finalized'}
+                      {isProcessing ? 'Assessment in Progress...' : 'Session Finalized'}
                     </h2>
                     <p className="text-slate-500 max-w-sm mx-auto leading-relaxed">
                       {isProcessing 
-                        ? `Applying evaluation criteria to current submission.` 
-                        : `All documents evaluated. The upload queue has been cleared for your next batch.`}
+                        ? `Leveraging Qwen-Max for objective logical grading.` 
+                        : `All documents evaluated via Qwen Core. The upload queue has been cleared.`}
                     </p>
                   </div>
 
@@ -263,18 +260,16 @@ const App: React.FC = () => {
               )}
             </div>
 
-            {/* Status Bar */}
             <div className="px-6 py-3 bg-slate-800 text-white flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Logic-First Sentry Active</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider">Qwen-Max Engine Active</span>
               </div>
-              <span className="text-[10px] text-slate-400 font-medium">VERSION 2.4.0 • AUTO-QUEUE RESET</span>
+              <span className="text-[10px] text-slate-400 font-medium">VERSION 3.0.0 • DASH_SCOPE API</span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Score Board */}
         <div className="w-full md:w-[450px] lg:w-[550px] flex flex-col gap-4">
           <div className="flex justify-between items-center px-4">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
