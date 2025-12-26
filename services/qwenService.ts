@@ -43,8 +43,8 @@ export const scoreEssay = async (
   
   // Use OpenAI-compatible endpoint through Vite proxy
   const endpoint = isMultimodal 
-    ? '/api/dashscope/api/v1/services/aigc/multimodal-generation/generation'
-    : '/api/dashscope/compatible-mode/v1/chat/completions';
+    ? '/api/qwen/api/v1/services/aigc/multimodal-generation/generation'
+    : '/api/qwen/compatible-mode/v1/chat/completions';
 
   const systemPrompt = `You are a DETERMINISTIC SCORING ENGINE. Absolute consistency is required.
 
@@ -136,9 +136,9 @@ OUTPUT FORMAT (Strict JSON):
     }
 
     // For text-based content, use OpenAI-compatible endpoint format
-    // Using qwen-long (free tier, long context window)
+    // Using qwen-turbo - most commonly available model
     const payload = {
-      model: "qwen-long",
+      model: "qwen-turbo",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `Analyze this essay and respond with ONLY valid JSON:\n\n${textToAnalyze}` }

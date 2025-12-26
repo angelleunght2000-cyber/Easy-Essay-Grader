@@ -11,16 +11,16 @@ export default defineConfig(({ mode }) => {
         port: 3000,
         host: '0.0.0.0',
         proxy: {
-          '/api/dashscope': {
+          '/api/qwen': {
             target: 'https://dashscope.aliyuncs.com',
+            // Note: If using SFM platform, change to: https://sfm.aliyuncs.com
             changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/api\/dashscope/, ''),
+            rewrite: (path) => path.replace(/^\/api\/qwen/, ''),
             configure: (proxy, options) => {
               proxy.on('proxyReq', (proxyReq, req, res) => {
                 // Add authorization header
                 proxyReq.setHeader('Authorization', `Bearer ${apiKey}`);
                 proxyReq.setHeader('Content-Type', 'application/json');
-                proxyReq.setHeader('X-DashScope-SSE', 'disable');
               });
             },
           },
