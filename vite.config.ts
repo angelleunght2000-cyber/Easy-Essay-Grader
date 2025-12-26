@@ -13,15 +13,11 @@ export default defineConfig(({ mode }) => {
         proxy: {
           '/api/qwen': {
             target: 'https://dashscope.aliyuncs.com',
-            // Note: If using SFM platform, change to: https://sfm.aliyuncs.com
             changeOrigin: true,
+            secure: true,
             rewrite: (path) => path.replace(/^\/api\/qwen/, ''),
-            configure: (proxy, options) => {
-              proxy.on('proxyReq', (proxyReq, req, res) => {
-                // Add authorization header
-                proxyReq.setHeader('Authorization', `Bearer ${apiKey}`);
-                proxyReq.setHeader('Content-Type', 'application/json');
-              });
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
             },
           },
         },
