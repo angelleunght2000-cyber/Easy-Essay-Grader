@@ -132,7 +132,7 @@ const App: React.FC = () => {
                   <h2 className="text-4xl font-extrabold text-slate-800 leading-tight">Objective analysis for high-stakes hiring.</h2>
                   <p className="text-slate-600 leading-relaxed text-lg">
                     This tool evaluates candidate essays against our 9 core values with absolute mathematical consistency. 
-                    Powered by Qwen-Max for industry-leading logic analysis.
+                    Powered by Qwen-Turbo for fast and reliable logic analysis.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-4">
@@ -241,7 +241,7 @@ const App: React.FC = () => {
                     </h2>
                     <p className="text-slate-500 max-w-sm mx-auto leading-relaxed">
                       {isProcessing 
-                        ? `Leveraging Qwen-Max for objective logical grading.` 
+                        ? `Leveraging Qwen-Turbo for objective logical grading.` 
                         : `All documents evaluated via Qwen Core. The upload queue has been cleared.`}
                     </p>
                   </div>
@@ -263,7 +263,7 @@ const App: React.FC = () => {
             <div className="px-6 py-3 bg-slate-800 text-white flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Qwen-Max Engine Active</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider">Qwen-Turbo Engine Active</span>
               </div>
               <span className="text-[10px] text-slate-400 font-medium">VERSION 3.0.0 • DASH_SCOPE API</span>
             </div>
