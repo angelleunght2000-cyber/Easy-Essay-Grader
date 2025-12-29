@@ -6,13 +6,16 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     // Support both QWEN_API_KEY and DASHSCOPE_API_KEY (like Python SDK)
     const apiKey = env.QWEN_API_KEY || env.DASHSCOPE_API_KEY;
+    // Support configurable base URL (mainland vs international)
+    const baseUrl = env.DASHSCOPE_BASE_URL || 'https://dashscope.aliyuncs.com';
+    
     return {
       server: {
         port: 3000,
         host: '0.0.0.0',
         proxy: {
           '/api/qwen': {
-            target: 'https://dashscope.aliyuncs.com',
+            target: baseUrl,
             changeOrigin: true,
             secure: false,
             rewrite: (path) => path.replace(/^\/api\/qwen/, ''),
