@@ -41,10 +41,23 @@ export const scoreEssay = async (
 ): Promise<Partial<EssayResult>> => {
   const isMultimodal = mimeType.startsWith('image/');
   
-  // Use OpenAI-compatible endpoint through Vite proxy
-  const endpoint = isMultimodal 
-    ? '/api/qwen/api/v1/services/aigc/multimodal-generation/generation'
-    : '/api/qwen/compatible-mode/v1/chat/completions';
+  // Detect if we're in production (Vercel) or development (localhost)
+  const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+  
+  // Use different endpoints for dev vs production
+  let endpoint: string;
+  if (isProduction) {
+    // Production: Use Vercel serverless function
+    const path = isMultimodal 
+      ? '/api/v1/services/aigc/multimodal-generation/generation'
+      : '/api/v1/services/aigc/text-generation/generation';
+    endpoint = `/api/qwen?endpoint=${encodeURIComponent(path)}`;
+  } else {
+    // Development: Use Vite proxy
+    endpoint = isMultimodal 
+      ? '/api/qwen/api/v1/services/aigc/multimodal-generation/generation'
+      : '/api/qwen/api/v1/services/aigc/text-generation/generation';
+  }
 
   const systemPrompt = `You are a DETERMINISTIC SCORING ENGINE. Absolute consistency is required.
 
@@ -135,15 +148,20 @@ OUTPUT FORMAT (Strict JSON):
       }
     }
 
-    // For text-based content, use OpenAI-compatible endpoint format
+    // For text-based content, use native DashScope API format
     // Using qwen-turbo - most commonly available model
     const payload = {
       model: "qwen-turbo",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `Analyze this essay and respond with ONLY valid JSON:\n\n${textToAnalyze}` }
-      ],
-      temperature: 0.1
+      input: {
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `Analyze this essay and respond with ONLY valid JSON:\n\n${textToAnalyze}` }
+        ]
+      },
+      parameters: {
+        result_format: "message",
+        temperature: 0.1
+      }
     };
 
     const response = await fetch(endpoint, {
@@ -161,7 +179,7 @@ OUTPUT FORMAT (Strict JSON):
     }
 
     const data = await response.json();
-    const contentText = data.choices?.[0]?.message?.content || "";
+    const contentText = data.output?.choices?.[0]?.message?.content || "";
     
     // Parse JSON response
     const result = JSON.parse(contentText);

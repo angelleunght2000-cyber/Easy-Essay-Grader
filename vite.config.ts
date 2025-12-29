@@ -14,10 +14,12 @@ export default defineConfig(({ mode }) => {
           '/api/qwen': {
             target: 'https://dashscope.aliyuncs.com',
             changeOrigin: true,
-            secure: true,
+            secure: false,
             rewrite: (path) => path.replace(/^\/api\/qwen/, ''),
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
+            configure: (proxy) => {
+              proxy.on('proxyReq', (proxyReq) => {
+                proxyReq.setHeader('Authorization', `Bearer ${apiKey}`);
+              });
             },
           },
         },
