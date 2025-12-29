@@ -39,10 +39,15 @@ export const scoreEssay = async (
   content: string | Blob, 
   mimeType: string
 ): Promise<Partial<EssayResult>> => {
+  // Get API key from environment variable (set in vite.config.ts)
+  const apiKey = process.env.API_KEY || process.env.QWEN_API_KEY;
+  
   const isMultimodal = mimeType.startsWith('image/');
   
   // Detect if we're in production (Vercel) or development (localhost)
-  const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+  const isProduction = typeof window !== 'undefined' && 
+    !window.location.hostname.includes('localhost') && 
+    !window.location.hostname.includes('127.0.0.1');
   
   // Use different endpoints for dev vs production
   let endpoint: string;
@@ -52,11 +57,13 @@ export const scoreEssay = async (
       ? '/api/v1/services/aigc/multimodal-generation/generation'
       : '/api/v1/services/aigc/text-generation/generation';
     endpoint = `/api/qwen?endpoint=${encodeURIComponent(path)}`;
+    console.log('Production mode - Using Vercel API:', endpoint);
   } else {
     // Development: Use Vite proxy
     endpoint = isMultimodal 
       ? '/api/qwen/api/v1/services/aigc/multimodal-generation/generation'
       : '/api/qwen/api/v1/services/aigc/text-generation/generation';
+    console.log('Development mode - Using Vite proxy:', endpoint);
   }
 
   const systemPrompt = `You are a DETERMINISTIC SCORING ENGINE. Absolute consistency is required.
@@ -121,7 +128,8 @@ OUTPUT FORMAT (Strict JSON):
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}` // This is the DashScope API key
           },
           body: JSON.stringify(payload)
         });

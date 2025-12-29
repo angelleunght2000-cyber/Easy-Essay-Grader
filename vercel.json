@@ -1,6 +1,11 @@
 {
-    "rewrites": [
-      { "source": "/api/(.*)", "destination": "/api/$1" },
-      { "source": "/(.*)", "destination": "/" }
-    ]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "functions": {
+    "api/qwen.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
   }
+}
