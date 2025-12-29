@@ -25,8 +25,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const apiKey = process.env.QWEN_API_KEY || process.env.DASHSCOPE_API_KEY;
+    const baseUrl = process.env.DASHSCOPE_BASE_URL || 'https://dashscope-intl.aliyuncs.com';
+    
+    console.log('=== Environment Check ===');
     console.log('API Key present:', !!apiKey);
     console.log('API Key length:', apiKey?.length);
+    console.log('API Key starts with sk-:', apiKey?.startsWith('sk-'));
+    console.log('Base URL:', baseUrl);
+    console.log('========================');
 
     if (!apiKey) {
       console.error('API key not configured in environment variables');
@@ -42,8 +48,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     // Construct the full DashScope API URL
-    // Use international endpoint for Vercel (accessible globally)
-    const baseUrl = process.env.DASHSCOPE_BASE_URL || 'https://dashscope-intl.aliyuncs.com';
     const apiUrl = `${baseUrl}${endpoint}`;
     console.log('Using base URL:', baseUrl);
     console.log('Forwarding request to:', apiUrl);
